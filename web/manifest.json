@@ -1,0 +1,23 @@
+{
+    "name": "Deprofiz",
+    "short_name": "Deprofiz",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#007f00",
+    "description": "A new Flutter project.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/DprofizLogo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/DprofizLogo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
