@@ -187,7 +187,9 @@ class AuthService {
   }*/
   //----------------------uuid stored in web local Storage ------------------------------//
 
-  Future<bool> sendOtp(String sendOtpUrl, String email) async {
+  Future<bool> sendOtp(
+      //String UserId
+      String sendOtpUrl, String email) async {
     print('sendOtp: Starting OTP process...');
     try {
       print('sendOtp: Fetching or generating UUID...');
@@ -197,12 +199,17 @@ class AuthService {
 
       print('sendOtp: Sending OTP to: $sendOtpUrl');
       print('sendOtp: Request Body: ${json.encode(
-          {'email': email, 'uuid': uuid})}');
+          {
+            //'user_id':UserId ,
+            'email': email,
+            'uuid': uuid
+          })}');
 
       final response = await http.post(
         Uri.parse(sendOtpUrl),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
+         // 'user_id':UserId,
           'email': email,
           'uuid': uuid, // Use the stored UUID
         }),

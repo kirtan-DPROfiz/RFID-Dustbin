@@ -47,6 +47,8 @@ dependencies:
   printing: ^5.9.1
   webview_flutter: ^4.2.2
   url_launcher: ^6.1.12
+  nfc_manager: ^3.5.0
+
 
 
 

@@ -269,8 +269,7 @@ class RestClient {
     }
   }
 // Employee : manage role :
-  static Future<Map<String, dynamic>>
-  getManageAccessRole(Map<String, dynamic> requestBody) async {
+  static Future<Map<String, dynamic>> getManageAccessRole(Map<String, dynamic> requestBody) async {
     print("Starting getmanageAccessRole...");
     try {
       const String apiUrl =
@@ -293,6 +292,39 @@ class RestClient {
       throw Exception("Error fetching data: $e");
     }
   }
+
+
+  // RFID Scan ID:
+  static Future<void> rfidScan(Map<String, dynamic> requestBody) async {
+    print("➡️ [RestClient] Starting RFIDScan...");
+
+    try {
+      final String apiUrl = "https://intervein.dprofiz.com/Rfid_api/Employee/insert_data.php";
+      print("🌐 [RestClient] Adding Employee via API: $apiUrl");
+      final response = await httpHelper.post(
+        url: apiUrl,
+        isRequireAuthorization: true,
+        requestBody: json.encode(requestBody),
+      );
+      print("API request completed. Response received.");
+      print("📥 [RestClient] API Response: $response");
+
+      if (response != null && response['status'] == "success") {
+        print("✅ Employee added successfully!");
+      } else {
+        print("❌ Failed to add Employee. Response: $response");
+        throw Exception("Failed to add Employee");
+      }
+      // print("✅ [RestClient] API request completed. Status code: ${response
+      //     .statusCode}");
+      // print("📥 [RestClient] Response body: ${response.body}");
+    } catch (e) {
+      print("❌ [RestClient] Error adding Employee: $e");
+      throw e;
+    }
+  }
+
+
 
 
 
@@ -401,7 +433,7 @@ class RestClient {
     print("➡️ [RestClient] Starting addNewDustbin...");
 
     try {
-      final String apiUrl = "https://intervein.dprofiz.com/Rfid_api/Dustbin/add_dustbin.php";
+      final String apiUrl = "https://intervein.dprofiz.com/Rfid_api/Employee/add_employee.php";
       print("🌐 [RestClient] Adding dustbin via API: $apiUrl");
       final response = await httpHelper.post(
         url: apiUrl,

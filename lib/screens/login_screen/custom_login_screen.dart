@@ -160,6 +160,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
 import 'package:Deprofiz/Authentication_services/auth_services.dart';
 import 'package:Deprofiz/Authentication_services/sharedpreferencehelper.dart';
 import 'package:Deprofiz/helper/sharedpreferences_helper.dart';
+import 'package:Deprofiz/screens/login_screen/UserDetails/User_details.dart';
 import 'package:Deprofiz/screens/login_screen/webViewpage/web_view_Screen.dart';
 import 'package:Deprofiz/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -168,6 +169,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../Authentication_services/device_info_helper.dart';
+import '../Footer/footer.dart';
 
 class CustomLoginScreen extends StatefulWidget {
   // final String apiUrl; // Base API URL
@@ -190,12 +192,15 @@ class CustomLoginScreen extends StatefulWidget {
 class _CustomLoginScreenState extends State<CustomLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _useridController = TextEditingController();
   final _otpController = TextEditingController();
   bool _isLoading = false;
   bool _otpSent = false; // Track if OTP has been sent
   //String _selectedRole = 'Super-Admin'; // Default selected role
   //final List<String> _roles = ['Super-Admin', 'Admin', 'Employee']; // Roles
   String? _emailError; // Error message for email field
+  String? _useridError; // Error message for userId field
+  String? _otpError; // Error message for userId field
 
   @override
   void initState() {
@@ -310,14 +315,67 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
       });
     }
 
+ /*   if (_useridController.text.isEmpty) {
+      setState(() {
+        _useridError = "Please enter your UserId.";
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your UserId.'),
+        ),
+      );
+      print("Please enter your UserId.");
+      GetSnackBar(
+        title: "Error",
+        messageText: Text(
+          "Please enter your UserId.",
+          style: TextStyle(color: Colors.redAccent),
+        ),
+        backgroundColor: Colors.black,
+        snackPosition: SnackPosition.TOP,
+      );
+    } else {
+      setState(() {
+        _useridError = null; // Clear error when email is entered
+      });
+    }*/
+    // otp :
+    if (_otpController.text.isEmpty) {
+      setState(() {
+        _otpError = "Please enter your OTP.";
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter your OTP."),
+        ),
+      );
+      print("Please enter your OTP.");
+      GetSnackBar(
+        title: "Error",
+        messageText: Text(
+          "Please enter your OTP.",
+          style: TextStyle(color: Colors.redAccent),
+        ),
+        backgroundColor: Colors.black,
+        snackPosition: SnackPosition.TOP,
+      );
+    } else {
+      setState(() {
+        _otpError = null; // Clear error when email is entered
+      });
+    }
+
+
     setState(() => _isLoading = true);
     print('_sendOtp: Sending OTP to ${_emailController.text}');
+    //print('_sendOtp: Sending OTP to ${_useridController.text}');
 
     final authService = AuthService();
     try {
       final success = await authService.sendOtp(
         widget.sendOtpurl, // Use the full URL
         _emailController.text,
+       // _useridController.text,
       );
 
       if (success) {
@@ -506,185 +564,257 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
         child: Padding(
           padding: const EdgeInsets.only(top: 180),
           child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.blueAccent.shade100,
-                    Colors.deepPurpleAccent.shade100
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                    offset: Offset(0, 5),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white,
+                        Colors.white
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+
+                    borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(  // Add this for the border
+                        color: Colors.green,  // Green border color
+                        width: 2.0,  // Border width
+                      ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              width: 400, // Fixed width for the form
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Header Text
-                    Text(
-                      "Login Yourself",
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Logo and Name
-                    Container(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Dprofiz",
-                            style: TextStyle(
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple,
-                            ),
+                  width: 400, // Fixed width for the form
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Header Text
+                        Text(
+                          "Login Yourself",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(width: 8),
-                          Image.asset(
-                            "assets/images/DprofizLogo.png",
-                            height: 50, // Adjusted size
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Smart Dustbin Title
-                    Text(
-                      "Smart Dustbin",
-                      style: TextStyle(
-                        color: Colors.deepPurpleAccent,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Email Field
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'UserID',
-                        labelStyle: TextStyle(color: Colors.black),
-                        hintText: "Enter your Email",
-                        prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(26.0),
                         ),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter your email' : null,
-                    ),
-                    const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                    // Error Message
-                    if (_emailError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          _emailError!,
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-
-                    const SizedBox(height: 12),
-
-                    // Send OTP Button
-                    _isLoading
-                        ? const CircularProgressIndicator()
-                        : SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurpleAccent,
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                        // Logo and Name
+                        Container(
+                          height: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Dprofiz",
+                                style: TextStyle(
+                                  fontSize: 50,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
                                 ),
                               ),
-                              onPressed: _sendOtp,
-                              child: const Text(
-                                'Send OTP',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                              const SizedBox(width: 8),
+                              Image.asset(
+                                "assets/images/DprofizLogo.png",
+                                height: 50, // Adjusted size
                               ),
-                            ),
-                          ),
-
-                    if (_otpSent) ...[
-                      const SizedBox(height: 16),
-
-                      // OTP Field
-                      TextFormField(
-                        controller: _otpController,
-                        decoration: InputDecoration(
-                          labelText: 'Enter OTP',
-                          prefixIcon:
-                              Icon(Icons.lock, color: Colors.blueAccent),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(26.0),
+                            ],
                           ),
                         ),
-                        validator: (value) =>
-                            value!.isEmpty ? 'Please enter the OTP' : null,
-                      ),
-                      const SizedBox(height: 12),
 
-                      // Verify OTP Button
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurpleAccent,
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
+                        // Smart Dustbin Title
+                        Text(
+                          "Smart Dustbin",
+                          style: TextStyle(
+                            color: Colors.deepPurpleAccent,
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                       /* // userid Field
+                        TextFormField(
+                          controller: _useridController,
+                          decoration: InputDecoration(
+                            labelText: 'UserID',
+                            labelStyle: TextStyle(color: Colors.black),
+                            hintText: "Enter your userId",
+                            prefixIcon: Icon(Icons.person, color: Colors.blueAccent),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(26.0),
+                            ),
+                          ),
+                          validator: (value) =>
+                              value!.isEmpty ? 'Please enter your UserId' : null,
+                        ),
+
+                        if (_useridError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              _useridError!,
+                              style: TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ),*/
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: TextStyle(color: Colors.black),
+                            hintText: "Enter your Email",
+                            prefixIcon: Icon(Icons.email, color: Colors.blueAccent),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(26.0),
+                            ),
+                          ),
+                          validator: (value) =>
+                              value!.isEmpty ? 'Please enter your email' : null,
+                        ),
+                        const SizedBox(height:4 ),
+                        // Error Message
+                        if (_emailError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              _emailError!,
+                              style: TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ), // Error Message
+
+
+                        const SizedBox(height: 12),
+
+                        // Send OTP Button
+                        _isLoading
+                            ? const CircularProgressIndicator()
+                            : SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurpleAccent,
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  onPressed: _sendOtp,
+                                  child: const Text(
+                                    'Send OTP',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                onPressed: _verifyOtp,
-                                child: const Text(
-                                  'Submit OTP',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                              ),
+
+                        if (_otpSent) ...[
+                          const SizedBox(height: 16),
+
+                          // OTP Field
+                          TextFormField(
+                            controller: _otpController,
+                            decoration: InputDecoration(
+                              labelText: 'Enter OTP',
+                              prefixIcon:
+                                  Icon(Icons.lock, color: Colors.blueAccent),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(26.0),
                               ),
                             ),
-                    ],
-                  ],
+                            validator: (value) =>
+                                value!.isEmpty ? 'Please enter the OTP' : null,
+                          ),
+                          const SizedBox(height:4 ),
+                          if (_otpError != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                _otpError!,
+                                style: TextStyle(color: Colors.black, fontSize: 14),
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+
+                          // Verify OTP Button
+                          _isLoading
+                              ? const CircularProgressIndicator()
+                              : SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.deepPurpleAccent,
+                                      padding: EdgeInsets.symmetric(vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    onPressed: _verifyOtp,
+                                    child: const Text(
+                                      'Submit OTP',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 120),
+                Padding(padding: EdgeInsets.all(1.0),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(onPressed: (){
+
+                      }, child: Text('PRIVACY POLICY',
+                          style: TextStyle(color: Colors.blueAccent)),
+                      ),
+                      SizedBox(width: 4,),
+                      TextButton(onPressed: (){
+                        Get.to(()=>  UserDetailsForm());
+                      }, child: Text(" Organization Registration ",//'Don\'t have an account? Sign up'
+                          style: TextStyle(color: Colors.blueAccent)),
+                      ),
+                      SizedBox(width: 4,),
+                      TextButton(onPressed: (){
+
+                      }, child: Text('Terms & Condition',
+                          style: TextStyle(color: Colors.blueAccent)),
+                      )
+                    ],
+                  ) ,
+                ),
+                FooterWidget(),
+
+              ],
             ),
           ),
         ),
       ),
+
     );
+
   }
 }

@@ -568,6 +568,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
 
 //-------------new 2------------------------//
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'dart:developer';
 import 'dart:html' as html;
@@ -1024,7 +1025,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                 style: pw.TextStyle(
                   fontSize: 20,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.deepPurple,
+                  color: PdfColors.black,
                 ),
               ),
               pw.Text(
@@ -1032,7 +1033,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                 style: pw.TextStyle(
                   fontSize: 14,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.deepPurple,
+                  color: PdfColors.black,
                 ),
               ),
               pw.Text(
@@ -1040,7 +1041,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                 style: pw.TextStyle(
                   fontSize: 14,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.deepPurple,
+                  color: PdfColors.black,
                 ),
               ),
               pw.Divider(),
@@ -1050,14 +1051,33 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
       ),
     );
   }
-
+// -- generating pdf --
   Future<void> generatePdf() async {
     print("Starting PDF generation...");
     final pdf = pw.Document();
 
+    // You can replace this with actual username or get it from your app state
+    final String downloadedBy = "Super-Admin";
+
+    // Get current timestamp
+    final DateTime now = DateTime.now();
+    final String timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
 
     // Load the image data
     final Uint8List imageData = await _loadImage();
+
+    // Determine ID to show based on selected header
+    String idLabel = "";
+    String idValue = "";
+
+    if (selectedHeader == "Employee Wise" && exportempListInObj.isNotEmpty) {
+      idLabel = "Employee ID";
+      idValue =exportDustListInObj.first.scanLogs?.first.cardId ?? "N/A";
+    } else if (selectedHeader == "Dustbin Wise" && exportDustListInObj.isNotEmpty) {
+      idLabel = "Dustbin ID";
+      idValue =  exportempListInObj.first.scanLogs?.first.dustbinId ?? "N/A";
+    }
 
 
     if (selectedHeader == "All Logs") {
@@ -1070,6 +1090,19 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
               children: [
                 _buildCompanyHeader(imageData), // Pass the image data
                 pw.SizedBox(height: 10),
+                pw.Divider(),
+                pw.SizedBox(height: 10),
+                // Add metadata section
+                pw.Padding(
+                  padding: pw.EdgeInsets.only(top: 10, bottom: 10),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Downloaded by: $downloadedBy"),
+                      pw.Text("Timestamp: $timestamp"),
+                    ],
+                  ),
+                ),
                 pw.Divider(),
                 pw.Text("Exported Data - $selectedHeader", style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 10),

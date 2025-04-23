@@ -177,13 +177,17 @@ class _EmployeePageState extends State<EmployeePage> {
 
 // API integration
 
+import 'dart:async';
 import 'dart:developer';
 import 'package:Deprofiz/network%20manager/rest_client.dart';
 import 'package:Deprofiz/screens/Footer/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'dart:js' as js;
+import 'dart:html' as html;
 
+import '../../main.dart';
 import '../../models/api_models/All_Access_Block_List_In_Obj.dart';
 import '../../models/api_models/dustbin_list_in_array.dart';
 import '../../models/api_models/user_list_in_Array_emp.dart';
@@ -240,13 +244,31 @@ class _EmployeePageState extends State<EmployeePage> {
     });
   }
 
+  void RFIDEmployee(){
+    print("calling RFIDEmployee.....");
+    
+  }
+
+
+
   void addNewEmployee() {
+    final TextEditingController cardIDController = TextEditingController();
     print("addNewEmployee() called"); // Log for method invocation
     String newCardID = '';
     String newEmployeeName = '';
     String newDepartment = '';
     String newDesignation = '';
     String newEmail = '';
+    //final TextEditingController cardIdController = TextEditingController();
+    StreamSubscription? nfcSubscription;
+    // Initialize NFC reader immediately
+    js.context.callMethod('initNFCReader');
+
+    // Start NFC session and update the text field
+    startNFCReader((cardId) {
+      cardIDController.text = cardId;
+      newCardID = cardId;
+    });
 
     showDialog(
       context: context,
@@ -256,6 +278,7 @@ class _EmployeePageState extends State<EmployeePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
+              controller: cardIDController,
               decoration: InputDecoration(
                 labelText: 'Card ID',
                 border: OutlineInputBorder(
@@ -380,11 +403,11 @@ class _EmployeePageState extends State<EmployeePage> {
 
                     try {
                       await RestClient.addNewEmployee({
-                        "Card_ID": newCardID,
-                        "Employee_Name": newEmployeeName,
-                        "Department": newDepartment,
-                        "Designation": newDesignation,
-                        "Email_ID": newEmail,
+                        "Rfid_scanTag_id": newCardID,
+                        "emp_name": newEmployeeName,
+                        "department": newDepartment,
+                        "designation": newDesignation,
+                        "email": newEmail,
                       });
                       Get.snackbar("Success", "Employee added successfully!",
                           backgroundColor: Colors.black,
@@ -412,8 +435,24 @@ class _EmployeePageState extends State<EmployeePage> {
           ),
         ],
       ),
-    );
+    ).then((_) {
+      // Clean up when dialog is closed
+      nfcSubscription?.cancel();
+      cardIDController.dispose();
+    });
+    // Start listening after dialog is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      nfcSubscription = html.window.on['nfc-card-read'].listen((event) {
+        final customEvent = event as html.CustomEvent;
+        final cardId = customEvent.detail;
+
+        startNFCReader(cardId);
+      });
+      js.context.callMethod('initNFCReader');
+    });
+
   }
+
   // manageAccess to update the role of  Employee
   /*void manageRole(String email, String new_role) {
     print("manageRole() called for EmailID: $email"); // Log method call
