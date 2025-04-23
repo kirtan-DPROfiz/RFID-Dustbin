@@ -247,5 +247,30 @@
         }, 10000);
       };
     </script>
+    <script>
+  window.addEventListener('load', function() {
+    function createIFrame() {
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://intervein.dprofiz.com/Rfid_api/Payment/payment.html';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      return iframe;
+    }
+
+    window.addEventListener('flutterInAppWebViewPlatformReady', function() {
+      window.flutter_inappwebview.callHandler('createIFrame').then(function(result) {});
+    });
+
+    window.flutter_inappwebview = {
+      callHandler: function(handlerName) {
+        if (handlerName === 'createIFrame') {
+          return Promise.resolve(createIFrame());
+        }
+        return Promise.reject('Handler not found');
+      }
+    };
+  });
+</script>
   </body>
 </html>

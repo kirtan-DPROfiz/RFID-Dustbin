@@ -160,6 +160,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
 import 'package:Deprofiz/Authentication_services/auth_services.dart';
 import 'package:Deprofiz/Authentication_services/sharedpreferencehelper.dart';
 import 'package:Deprofiz/helper/sharedpreferences_helper.dart';
+import 'package:Deprofiz/screens/login_screen/Subscribtion/subscribtionplanpage.dart';
 import 'package:Deprofiz/screens/login_screen/UserDetails/User_details.dart';
 import 'package:Deprofiz/screens/login_screen/webViewpage/web_view_Screen.dart';
 import 'package:Deprofiz/screens/main/main_screen.dart';
@@ -167,6 +168,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Authentication_services/device_info_helper.dart';
 import '../Footer/footer.dart';
@@ -426,7 +428,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
   }
 
   //---------------------verify OTP funciton---------------------//
-  Future<void> _verifyOtp() async {
+/*  Future<void> _verifyOtp() async {
     if (_otpController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter the OTP.')),
@@ -526,6 +528,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
       setState(() => _isLoading = false);
     }
   }
+
   void _redirectToPayment() {
     Navigator.push(
       context,
@@ -535,9 +538,101 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
         ),
       ),
     );
+  }*/
+  //-------------------new-------------//
+  Future<void> _verifyOtp() async {
+    if (_otpController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the OTP.')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final authService = AuthService();
+    try {
+      final response = await authService.verifyOtp(
+        widget.verifyOtpurl,
+        _emailController.text,
+        _otpController.text,
+      );
+
+      // Handle payment required case
+      if (response['requires_payment'] == true) {
+        print('Payment required - redirecting to payment page');
+        _redirectToPayment();
+        return;
+      }
+
+      if (!response['success']) {
+        setState(() {
+          _emailError = "Invalid OTP. Please check the OTP & try again.";
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid OTP. Please check the OTP & try again.")),
+        );
+        return;
+      }
+
+      // Handle successful login
+      final token = response['token'];
+      await SharedPreferencesAuth.saveCredentials(
+        _emailController.text,
+        _otpController.text,
+      );
+      await SharedPreferencesAuth.saveToken(token);
+
+      final verifyResponse = await authService.verifyToken(
+        "https://intervein.dprofiz.com/Rfid_api/Auth/protected_api.php",
+      );
+
+      if (verifyResponse['success']) {
+        final role = verifyResponse['user']['role'];
+        print('User role: $role');
+
+        switch (role) {
+          case 'super_admin':
+            Navigator.pushReplacementNamed(context, '/main');
+            break;
+          case 'admin':
+            Navigator.pushReplacementNamed(context, '/adminmain');
+            break;
+          case 'employee':
+            Navigator.pushReplacementNamed(context, '/empmain');
+            break;
+          default:
+            await SharedPreferencesAuth.clearToken();
+            await SharedPreferencesAuth.clearCredentials();
+            Navigator.pushReplacementNamed(context, '/login');
+            break;
+        }
+      } else {
+        await SharedPreferencesAuth.clearToken();
+        await SharedPreferencesAuth.clearCredentials();
+        Navigator.pushReplacementNamed(context, "/login");
+      }
+    } catch (e) {
+      print('_verifyOtp: Error - $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
-  void _listenForPaymentSuccess() async {
+  void _redirectToPayment() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SubscriptionPlansPage(),
+      ),
+    );
+  }
+
+
+/*  void _listenForPaymentSuccess() async {
     print("Waiting for payment success...");
 
     // Simulating periodic checking (replace this with actual WebView listener)
@@ -550,6 +645,18 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
         Navigator.pushReplacementNamed(context, '/customLogin');
       }
     });
+  }*/
+
+  Future<void> _launchSubscriptionUrl() async {
+    final url = Uri.parse('https://intervein.dprofiz.com/Rfid_api/Payment/payment.html');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 
@@ -795,6 +902,26 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
                       TextButton(onPressed: (){
                         Get.to(()=>  UserDetailsForm());
                       }, child: Text(" Organization Registration ",//'Don\'t have an account? Sign up'
+                          style: TextStyle(color: Colors.blueAccent)),
+                      ),  TextButton(
+                        onPressed: () async {
+                          try {
+                            final url = Uri.parse('https://intervein.dprofiz.com/Rfid_api/Payment/payment.html');
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        },
+                        child: Text("Subscription Plans",//'Don\'t have an account? Sign up'
                           style: TextStyle(color: Colors.blueAccent)),
                       ),
                       SizedBox(width: 4,),

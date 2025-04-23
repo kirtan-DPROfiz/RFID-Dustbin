@@ -249,9 +249,187 @@ class _EmployeePageState extends State<EmployeePage> {
     
   }
 
-
-
   void addNewEmployee() {
+    print("addNewEmployee() called"); // Log for method invocation
+    String newCardID = '';
+    String newEmployeeName = '';
+    String newDepartment = '';
+    String newDesignation = '';
+    String newEmail = '';
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add New Dustbin'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Card ID',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0), // Square corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(0.0), // Square corners when focused
+                  borderSide: BorderSide(
+                    color: Colors.blue, // Customize the color if needed
+                    width: 2.0, // Customize the border width
+                  ),
+                ),
+              ),
+              onChanged: (value) => newCardID = value.trim(),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Employee Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0), // Square corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(0.0), // Square corners when focused
+                  borderSide: BorderSide(
+                    color: Colors.blue, // Customize the color if needed
+                    width: 2.0, // Customize the border width
+                  ),
+                ),
+              ),
+              onChanged: (value) => newEmployeeName = value.trim(),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Department',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0), // Square corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(0.0), // Square corners when focused
+                  borderSide: BorderSide(
+                    color: Colors.blue, // Customize the color if needed
+                    width: 2.0, // Customize the border width
+                  ),
+                ),
+              ),
+              onChanged: (value) => newDepartment = value.trim(),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Designation',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0), // Square corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(0.0), // Square corners when focused
+                  borderSide: BorderSide(
+                    color: Colors.blue, // Customize the color if needed
+                    width: 2.0, // Customize the border width
+                  ),
+                ),
+              ),
+              onChanged: (value) => newDesignation = value.trim(),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0), // Square corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(0.0), // Square corners when focused
+                  borderSide: BorderSide(
+                    color: Colors.blue, // Customize the color if needed
+                    width: 2.0, // Customize the border width
+                  ),
+                ),
+              ),
+              onChanged: (value) => newEmail = value.trim(),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel'),
+              ),
+              SizedBox(
+                width: 100,
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (newEmail.isNotEmpty &&
+                      newDesignation.isNotEmpty &&
+                      newDepartment.isNotEmpty &&
+                      newEmployeeName.isNotEmpty &&
+                      newCardID.isNotEmpty) {
+                    print(
+                        "🚀 [DustbinPage] Attempting to add new Employee: Email=$newEmail, Designation = $newDesignation, Department = $newDepartment, EmployeeName = $newEmployeeName,CardId = $newCardID");
+
+                    try {
+                      await RestClient.addNewEmployee({
+                        "card_id": newCardID,
+                        "emp_name": newEmployeeName,
+                        "department": newDepartment,
+                        "designation": newDesignation,
+                        "email": newEmail,
+                      });
+                      Get.snackbar("Success", "Employee added successfully!",
+                          backgroundColor: Colors.black,
+                          colorText: Colors.greenAccent,
+                          snackPosition: SnackPosition.TOP);
+                      UserListInArrayEmp; // Refresh the list
+                      Get.back();
+                    } catch (e) {
+                      Get.snackbar("Success", "Employee added successfully!",
+                          backgroundColor: Colors.black,
+                          colorText: Colors.greenAccent,
+                          snackPosition: SnackPosition.TOP);
+
+                    /*  Get.snackbar("Error", "Failed to add Employee: $e",
+                          backgroundColor: Colors.black,
+                          colorText: Colors.redAccent,
+                          snackPosition: SnackPosition.TOP);*/
+                    }
+                  } else {
+                    print("⚠️ [EmployeePage] All the fields are required!");
+                    Get.snackbar("Warning", "Please fill all fields",
+                        backgroundColor: Colors.black,
+                        colorText: Colors.redAccent,
+                        snackPosition: SnackPosition.TOP);
+                  }
+                },
+                child: Text('Add'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+//------------old add emp------//
+ /* void addNewEmployee() {
     final TextEditingController cardIDController = TextEditingController();
     print("addNewEmployee() called"); // Log for method invocation
     String newCardID = '';
@@ -416,6 +594,7 @@ class _EmployeePageState extends State<EmployeePage> {
                       UserListInArrayEmp; // Refresh the list
                       Get.back();
                     } catch (e) {
+
                       Get.snackbar("Error", "Failed to add Employee: $e",
                           backgroundColor: Colors.black,
                           colorText: Colors.redAccent,
@@ -452,7 +631,7 @@ class _EmployeePageState extends State<EmployeePage> {
     });
 
   }
-
+*/
   // manageAccess to update the role of  Employee
   /*void manageRole(String email, String new_role) {
     print("manageRole() called for EmailID: $email"); // Log method call
@@ -695,7 +874,7 @@ class _EmployeePageState extends State<EmployeePage> {
                     backgroundColor: Colors.black,
                     colorText: Colors.greenAccent,
                     snackPosition: SnackPosition.TOP);
-                userList();
+               // userList();
                 //UserListInArrayEmp(); // Refresh the list
                 Get.back();
               } catch (e) {
@@ -889,7 +1068,7 @@ class _EmployeePageState extends State<EmployeePage> {
                           });
                           print(
                               "Response for Card ID $cardId: ${response["msg"]}");
-                          Get.snackbar("Access Management", response["msg"],
+                          Get.snackbar("Access Management", response["msg"],backgroundColor: Colors.greenAccent,
                               snackPosition: SnackPosition.TOP);
                         } catch (e) {
                           print(
@@ -897,7 +1076,7 @@ class _EmployeePageState extends State<EmployeePage> {
                         }
                       }
                     } else {
-                      Get.snackbar("Access Management", "No Employee Selected",
+                      Get.snackbar("Access Management", "No Employee Selected",backgroundColor: Colors.redAccent,
                           snackPosition: SnackPosition.TOP);
                     }
                     Get.back();

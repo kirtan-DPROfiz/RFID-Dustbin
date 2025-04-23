@@ -289,7 +289,7 @@ class AuthService {
 
 
   // Verify OTP and return token
-  Future<Map<String, dynamic>> verifyOtp(String verifyOtpUrl, String email,
+ /* Future<Map<String, dynamic>> verifyOtp(String verifyOtpUrl, String email,
       String otp) async {
     try {
       print('Verifying OTP at: $verifyOtpUrl');
@@ -302,7 +302,7 @@ class AuthService {
       );
 
       print('Verify OTP Response: ${response.body}');
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 402) {
         final data = json.decode(response.body);
         // Check if the response contains a "success" field
         if (data['success'] != null) {
@@ -328,6 +328,58 @@ class AuthService {
     } catch (e) {
       print('Verify OTP Error: $e');
       return {'success': false, 'token': null};
+    }
+  }*/
+  //verify new method
+  Future<Map<String, dynamic>> verifyOtp(String verifyOtpUrl, String email, String otp) async {
+    try {
+      print('Verifying OTP at: $verifyOtpUrl');
+      print('Request Body: ${json.encode({'email': email, 'otp': otp})}');
+
+      final response = await http.post(
+        Uri.parse(verifyOtpUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'otp': otp}),
+      );
+
+      print('Verify OTP Response: ${response.body}');
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        // Check for subscription error first
+        if (data.containsKey('error') &&
+            data['error'] == "No active subscription found. Please complete the payment.") {
+          return {
+            'requires_payment': true,
+            'success': false,
+          };
+        }
+
+        // Check for successful login
+        if (data['success'] != null) {
+          if (data['success'] is String && data['success'].contains("Login successful")) {
+            return {
+              'success': true,
+              'token': data['token'],
+              'card_id': data['card_id'],
+              'role': data['role'],
+            };
+          }
+        }
+        return {'success': false};
+      } else if (response.statusCode == 402) {
+        // Payment required status
+        return {
+          'requires_payment': true,
+          'success': false,
+        };
+      } else {
+        print('Failed with status code: ${response.statusCode}');
+        return {'success': false};
+      }
+    } catch (e) {
+      print('Verify OTP Error: $e');
+      return {'success': false};
     }
   }
 

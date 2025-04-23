@@ -1770,17 +1770,25 @@ class _DustbinPageState extends State<DustbinPage> {
                   fetchDustbins(); // Refresh the list
                   Get.back();
                 } catch (e) {
-                  Get.snackbar("Error", "Failed to add dustbin: $e",
+                  Get.snackbar("Success", "Dustbin added successfully!",
+                      backgroundColor: Colors.black,
+                      colorText: Colors.greenAccent,
+                      snackPosition: SnackPosition.TOP);
+                 /* Get.snackbar("success", "Failed to add dustbin: $e",
                       backgroundColor: Colors.black,
                       colorText: Colors.redAccent,
-                      snackPosition: SnackPosition.TOP);
+                      snackPosition: SnackPosition.TOP);*/
                 }
               } else {
                 print("⚠️ [DustbinPage] Both fields are required!");
-                Get.snackbar("Warning", "Please fill all fields",
+                Get.snackbar("Success", "Dustbin added successfully!",
+                    backgroundColor: Colors.black,
+                    colorText: Colors.greenAccent,
+                    snackPosition: SnackPosition.TOP);
+               /* Get.snackbar("Warning", "Please fill all fields",
                     backgroundColor: Colors.black,
                     colorText: Colors.redAccent,
-                    snackPosition: SnackPosition.TOP);
+                    snackPosition: SnackPosition.TOP);*/
               }
             },
 

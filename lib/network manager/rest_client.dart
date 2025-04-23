@@ -522,6 +522,34 @@ class RestClient {
       throw Exception("Error fetching data: $e");
     }
   }
+
+  //Add new dustbin:
+  /*static Future<void> addNewDustbin(Map<String, dynamic> requestBody) async {
+    print("➡️ [RestClient] Starting addNewDustbin...");
+
+    try {
+      final String apiUrl = "https://intervein.dprofiz.com/Rfid_api/Dustbin/add_dustbin.php";
+      print("🌐 [RestClient] Adding dustbin via API: $apiUrl");
+      final response = await httpHelper.post(
+        url: apiUrl,
+        isRequireAuthorization: true,
+        requestBody: json.encode(requestBody),
+      );
+      print("API request completed. Response received.");
+      print("📥 [RestClient] API Response: $response");
+
+      if (response != null && (response['success'] != null || response['status'] == "success")) {
+        print("✅ Dustbin added successfully!");
+      } else {
+        print("❌ Failed to add dustbin. Response: $response");
+        throw Exception("Failed to add dustbin");
+      }
+    } catch (e) {
+      print("❌ [RestClient] Error adding dustbin: $e");
+      throw e;
+    }
+  }
+  */
   // Add a new dustbin
   static Future<void> addNewDustbin(Map<String, dynamic> requestBody) async {
     print("➡️ [RestClient] Starting addNewDustbin...");
