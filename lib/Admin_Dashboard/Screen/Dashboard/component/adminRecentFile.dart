@@ -71,7 +71,8 @@ DataRow recentFileDataRow(RecentLog fileInfo) {
     cells: [
       DataCell(
         Text(
-          fileInfo.EmployeeName,
+         // fileInfo.EmployeeName,
+          fileInfo.cardId,
           style: TextStyle(color: Colors.white), // Black text for data cells
         ),
       ),

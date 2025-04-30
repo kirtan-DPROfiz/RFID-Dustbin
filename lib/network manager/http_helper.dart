@@ -15,7 +15,6 @@ class HttpHelper {
 
 // Get API Handle
 
-
     Future<dynamic> get({
       required String url,
       bool isRequireAuthorization = false, /*required Map<String, String> headers,*/

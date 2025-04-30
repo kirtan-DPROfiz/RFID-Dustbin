@@ -33,6 +33,36 @@ class RestClient {
     print("API Response: $response"); // Debugging log
     return response;
   }*/
+// organization :
+  static Future<Map<String, dynamic>>  organizationRegistration (Map<String, dynamic> requestBody)async{
+    print("[RestClient] Starting Organization Registration...");
+
+    try {
+      final String apiUrl = "https://intervein.dprofiz.com/Rfid_api/Auth/path_to_api.php";
+      print("🌐 [RestClient] Register Organization  via API: $apiUrl");
+      final response = await httpHelper.post(
+        url: apiUrl,
+        requestBody: json.encode(requestBody),
+      );
+      print("API request completed. Response received.");
+
+
+      if (response != null &&response.containsKey('success') ) {
+        print("✅ Organization Register successfully!!");
+        print("📥 [RestClient] API Response: $response");
+        return response;
+      } else {
+        print(" Failed to Register Organization. Response: $response");
+        throw Exception("Failed to Register Oganization...!!");
+      }
+
+    } catch (e) {
+      print(" [RestClient] Error adding dustbin: $e");
+      throw e;
+    }
+
+
+  }
 
 // get data in object:
 

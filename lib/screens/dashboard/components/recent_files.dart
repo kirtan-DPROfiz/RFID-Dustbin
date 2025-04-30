@@ -69,8 +69,8 @@ DataRow recentFileDataRow(RecentLog fileInfo) {
   return DataRow(
     cells: [
       DataCell(
-        Text(
-          fileInfo.EmployeeName,
+        Text( // fileInfo.EmployeeName,
+          fileInfo.cardId,
           style: TextStyle(color: Colors.white), // Black text for data cells
         ),
       ),

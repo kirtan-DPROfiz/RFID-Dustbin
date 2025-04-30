@@ -54,15 +54,15 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 
 class RecentLog {
-  final String EmployeeName;
-  //final String cardId;
+  //final String EmployeeName;
+  final String cardId;
   final String dustbinId;
   final DateTime date;
 
   RecentLog({
-    //required this.cardId,
+    required this.cardId,
     required this.dustbinId,
-    required this.EmployeeName,
+   // required this.EmployeeName,
     required this.date,
   });
 
@@ -75,39 +75,44 @@ class RecentLog {
 final EmployeeController employeeController = Get.put(EmployeeController());
 List<RecentLog> demoRecentLogs = [
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string,
-    // cardId: "C12345",
+    //EmployeeName: employeeController.employeeCount.string,
+     cardId: "C12345",
     dustbinId: "D001",
     date: DateTime(2024, 12, 1),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string,
-    //cardId: "C12346",
+   // EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12346",
     dustbinId: "D002",
     date: DateTime(2024, 12, 2),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string, //cardId: "C12347",
+    //EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12347",
     dustbinId: "D003",
     date: DateTime(2024, 12, 3),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string, //cardId: "C12348",
+    //EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12348",
     dustbinId: "D004",
     date: DateTime(2024, 12, 4),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string, //cardId: "C12349",
+    //EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12349",
     dustbinId: "D005",
     date: DateTime(2024, 12, 5),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string, //cardId: "C12350",
+    //EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12350",
     dustbinId: "D006",
     date: DateTime(2024, 12, 6),
   ),
   RecentLog(
-    EmployeeName: employeeController.employeeCount.string, //cardId: "C12351",
+   // EmployeeName: employeeController.employeeCount.string,
+    cardId: "C12351",
     dustbinId: "D007",
     date: DateTime(2024, 12, 7),
   ),

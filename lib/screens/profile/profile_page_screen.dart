@@ -494,11 +494,13 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                                     //labelText: "Employee Email",
                                     prefixIcon: const Icon(Icons.email,
                                         color: Colors.white),
-                                    suffixIcon: IconButton(
+
+                                  /*  suffixIcon: IconButton(
                                       icon: const Icon(Icons.edit,
                                           color: Colors.white),
                                       onPressed: updateEmail,
-                                    ),
+                                    ),*/
+
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),

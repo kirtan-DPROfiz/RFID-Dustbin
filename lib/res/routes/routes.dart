@@ -3,6 +3,7 @@
 class Routes {
   static const String loginScreen = "/login";
   static const String mainScreen = '/main';
+  static const String OrganizationScreen = '/OragRegtr';
 
   static const String dashboardScreen = '/dashboard';
   static const String dustbinPage = '/dustbin';

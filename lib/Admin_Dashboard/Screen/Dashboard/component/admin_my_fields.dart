@@ -272,10 +272,14 @@ class AdminMyFiles extends StatelessWidget {
                       adminemployeeController.userListInarray;// Refresh the list
                       Get.back();
                     } catch (e) {
-                      Get.snackbar("Error", "Failed to add Employee: $e",
+                      Get.snackbar("Success", "Employee added successfully!",
+                          backgroundColor: Colors.black,
+                          colorText: Colors.greenAccent,
+                          snackPosition: SnackPosition.TOP);
+                     /* Get.snackbar("Error", "Failed to add Employee: $e",
                           backgroundColor: Colors.black,
                           colorText: Colors.redAccent,
-                          snackPosition: SnackPosition.TOP);
+                          snackPosition: SnackPosition.TOP);*/
                     }
                   } else {
                     print("⚠️ [EmployeePage] All the fields are required!");

@@ -394,10 +394,10 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
         );
       } else {
         print('_sendOtp: Failed to send OTP.');
-        /*    ScaffoldMessenger.of(context).showSnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Failed to send OTP. Please try again.')),
-        );*/
+        );
         GetSnackBar(
           title: "Error",
           messageText: Text(
@@ -413,7 +413,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
       /* ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred. Please try again.')),
       );*/
-      GetSnackBar(
+   /*   GetSnackBar(
         title: "Error",
         messageText: Text(
           "An error occurred. Please try again.",
@@ -421,6 +421,14 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
         ),
         backgroundColor: Colors.black,
         snackPosition: SnackPosition.TOP,
+      );*/
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll("Exception: ", ""),
+        backgroundColor: Colors.black,
+        colorText: Colors.redAccent,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 4),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -567,7 +575,7 @@ class _CustomLoginScreenState extends State<CustomLoginScreen> {
 
       if (!response['success']) {
         setState(() {
-          _emailError = "Invalid OTP. Please check the OTP & try again.";
+          _otpError = "Invalid OTP. Please check the OTP & try again.";
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Invalid OTP. Please check the OTP & try again.")),

@@ -1,5 +1,9 @@
+import 'package:Deprofiz/screens/login_screen/custom_login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../network manager/rest_client.dart';
+import '../../../res/routes/routes.dart';
 import '../../Footer/footer.dart';
 
 class UserDetailsForm extends StatefulWidget {
@@ -11,19 +15,29 @@ class UserDetailsForm extends StatefulWidget {
 
 class _UserDetailsFormState extends State<UserDetailsForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _organizationNameController =
-      TextEditingController();
-  final TextEditingController _contactPersonNameController =
-      TextEditingController();
-  final TextEditingController _contactPersonMobileController =
-      TextEditingController();
+  final TextEditingController _organizationNameController = TextEditingController();
+  final TextEditingController _contactPersonNameController = TextEditingController();
+  final TextEditingController _contactPersonMobileController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _useridController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _areaController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _numDustbinsController = TextEditingController();
   final TextEditingController _numFloorsController = TextEditingController();
+
+  String newOrganization= " ";
+  String newcontactPersonName= " ";
+  String newcontactPersonMobile= " ";
+  String newemail = " ";
+  String newuserid = " ";
+  String newphoneNumber = " ";
+  String newaddress= " ";
+  String newarea= " ";
+  String newcity= " ";
+  String newnumDustbin= " ";
+  String newnumFloors= " ";
 
   @override
   void dispose() {
@@ -40,24 +54,157 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Form submitted successfully!'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    void _submitForm() async {
+      try{
+        if (newOrganization.isEmpty &&
+            newcontactPersonMobile.isEmpty &&
+            newcontactPersonName.isEmpty &&
+            newcity.isEmpty &&
+            newarea.isEmpty &&
+            newaddress.isEmpty &&
+            newphoneNumber.isEmpty &&
+            newuserid.isEmpty &&
+            newnumFloors.isEmpty &&
+            newnumDustbin.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Please fill all the fields!'),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height - 100,
+                right: 20,
+                left: 20,
+              ),
+            ),
+          );
+          return; // Exit the function if all fields are empty
+        }
+
+      if (_formKey.currentState!.validate()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Form Completed successfully!'),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+
+            ),
+            margin: EdgeInsets.only(
+              bottom: MediaQuery
+                  .of(context)
+                  .size
+                  .height - 100,
+              right: 20,
+              left: 20,
+            ),
           ),
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height - 100,
-            right: 20,
-            left: 20,
-          ),
-        ),
-      );
+        );
+      }
+
+      if (newOrganization.isNotEmpty &&
+          newcontactPersonMobile.isNotEmpty &&
+          newcontactPersonName.isNotEmpty &&
+          newcity.isNotEmpty &&
+          newarea.isNotEmpty &&
+          newaddress.isNotEmpty &&
+          newphoneNumber.isNotEmpty &&
+          newuserid.isNotEmpty &&
+          newnumFloors.isNotEmpty &&
+          newnumDustbin.isNotEmpty &&
+          newaddress.isNotEmpty) {
+
+        print("attempting to Register the organization :"
+            " organization name : $newOrganization , "
+            " contact Person Name: $newcontactPersonName ,"
+            " contact Person Mobile : $newcontactPersonMobile,"
+            " City : $newcity ,"
+            " Area : $newarea,"
+            " Address : $newaddress,"
+            " email : $newemail,"
+            " phone Number :$newphoneNumber,"
+            " UserId:  $newuserid,"
+            " Number of Floors : $newnumFloors,"
+            " Number of Dustbin : $newnumDustbin,"
+        );
+        try {
+            final response  = await RestClient.organizationRegistration({
+            "user_id": newuserid,
+            "organization_name": newOrganization,
+            "address": newaddress,
+            "city": newcity,
+            "area": newarea,
+            "contact_person_name": newcontactPersonName,
+            "contact_person_mobile": newcontactPersonMobile,
+            "email": newemail,
+            "phone_number": newphoneNumber,
+            "num_dustbins": newnumDustbin,
+            "num_floors": newnumFloors
+          });
+
+            if (response.containsKey('success')) {
+              Get.snackbar(
+                "Success",
+                "${response['success']}\nOrganization ID: ${response['organization_id']}",
+                backgroundColor: Colors.black,
+                colorText: Colors.greenAccent,
+                duration: Duration(seconds: 5),
+                snackPosition: SnackPosition.TOP,
+              );
+
+              print("✅ Success: ${response['success']}, ID: ${response['organization_id']}");
+              Get.to(() => CustomLoginScreen());
+            } else {
+              // Handle unexpected success format
+              Get.snackbar(
+                "Success",
+                "Organization Registered Successfully!",
+                backgroundColor: Colors.black,
+                colorText: Colors.greenAccent,
+                duration: Duration(seconds: 5),
+                snackPosition: SnackPosition.TOP,
+              );
+              Get.to(() => CustomLoginScreen());
+            }
+
+
+
+          // Extract success message from response
+        //  String successMessage = response['success'] ?? "Organization Registered Successfully!";
+    /*      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$response")),);
+          Get.snackbar("Success", response['success'] ?? "Organization Registered Successfully!",
+              backgroundColor: Colors.black,
+              colorText: Colors.greenAccent,duration: Duration(seconds: 5),
+              snackPosition: SnackPosition.TOP);*/
+
+            //print("✅ Response: ${response['success']}, ID: ${response['organization_id']}");
+          //Get.to(()=> CustomLoginScreen());
+            //Navigator.pushReplacementNamed(context, "/login" );
+        } catch (e) {
+          /*Get.snackbar("Error", "Organization Registration Faild !!",
+              backgroundColor: Colors.black,
+              colorText: Colors.redAccent,
+              duration: Duration(seconds: 4),
+              snackPosition: SnackPosition.TOP);*/
+
+          Get.snackbar(
+            "Error",
+            e.toString().replaceAll("Exception: ", ""),
+            backgroundColor: Colors.black,
+            colorText: Colors.redAccent,
+            snackPosition: SnackPosition.TOP,
+            duration: Duration(seconds: 4),
+          );
+          print("Error : $e");
+        }
+      }
+    }catch(e){
+        print("Error :$e");
+      }
     }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,11 +417,13 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     controller: _organizationNameController,
                     label: "Organization Name",
                     isRequired: true,
+                    onchange: (value) => newOrganization = value.trim(),
                   ),
                   _buildTextFormField(
                     controller: _addressController,
                     label: "Address",
                     isRequired: true,
+                    onchange: (value) => newaddress = value.trim(),
                     maxLines: 3,
                   ),
                 ],
@@ -290,12 +439,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     controller: _numDustbinsController,
                     label: "Number of Dustbins",
                     isRequired: true,
+                    onchange: (value) => newnumDustbin = value.trim(),
                     keyboardType: TextInputType.number,
                   ),
                   _buildTextFormField(
                     controller: _numFloorsController,
                     label: "Number of Floors",
                     isRequired: true,
+                    onchange: (value) => newnumFloors = value.trim(),
                     keyboardType: TextInputType.number,
                   ),
                 ],
@@ -317,11 +468,13 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     controller: _areaController,
                     label: "Area",
                     isRequired: true,
+                    onchange: (value) => newarea = value.trim(),
                   ),
                   _buildTextFormField(
                     controller: _cityController,
                     label: "City",
                     isRequired: true,
+                    onchange: (value) => newcity = value.trim(),
                   ),
                 ],
               ),
@@ -394,6 +547,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     controller: _organizationNameController,
                     label: "Organization Name",
                     isRequired: true,
+                    onchange: (value) => newOrganization = value.trim(),
                   ),
                   Row(
                     children: [
@@ -402,6 +556,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                           controller: _areaController,
                           label: "Area",
                           isRequired: true,
+                          onchange: (value) => newarea = value.trim(),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -410,6 +565,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                           controller: _cityController,
                           label: "City",
                           isRequired: true,
+                          onchange: (value) => newcity = value.trim(),
                         ),
                       ),
                     ],
@@ -419,6 +575,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     label: "Address",
                     isRequired: true,
                     maxLines: 3,
+                    onchange: (value) => newaddress = value.trim(),
                   ),
                 ],
               ),
@@ -432,17 +589,20 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                     controller: _contactPersonNameController,
                     label: "Contact Person Name",
                     isRequired: true,
+                    onchange: (value) => newcontactPersonName = value.trim(),
                   ),
                   _buildTextFormField(
                     controller: _contactPersonMobileController,
-                    label: "Contact Mobile",
+                    label: "Contact Person Mobile",
                     isRequired: true,
+                    onchange: (value) => newcontactPersonMobile = value.trim(),
                     keyboardType: TextInputType.phone,
                   ),
                   _buildTextFormField(
-                    controller: _contactPersonNameController,
+                    controller: _useridController,
                     label: "UserId",
                     isRequired: true,
+                    onchange: (value) => newuserid = value.trim(),
                   ),
                   Row(
                     children: [
@@ -451,6 +611,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                           controller: _emailController,
                           label: "Email",
                           isRequired: true,
+                          onchange: (value) => newemail = value.trim(),
                           keyboardType: TextInputType.emailAddress,
                         ),
                       ),
@@ -459,6 +620,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                         child: _buildTextFormField(
                           controller: _phoneNumberController,
                           label: "Phone Number",
+                          onchange: (value) => newphoneNumber = value.trim(),
                           keyboardType: TextInputType.phone,
                         ),
                       ),
@@ -527,6 +689,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
   Widget _buildTextFormField({
     required TextEditingController controller,
     required String label,
+    ValueChanged<String>? onchange,
     bool isRequired = false,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
@@ -534,6 +697,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
+        onChanged: onchange,
         controller: controller,
         decoration: InputDecoration(
           labelText: '$label${isRequired ? ' *' : ''}',

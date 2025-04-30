@@ -31,6 +31,7 @@ class RouteNames {
 
   static const String loginScreen = Routes.loginScreen;
   static const String mainScreen = Routes.mainScreen;
+  static const String OrganizationScreen = Routes.OrganizationScreen;
   static const String dashboardScreen = Routes.dashboardScreen;
   static const String dustbinPage= Routes.dustbinPage;
   static const String employeePage = Routes.employeePage;
